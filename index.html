@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Duty hour calculator </title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physician Duty Incentive Smart Calculator</title>
+    <style>
+        :root {
+            /* Colorful Palette */
+            --bg-grad: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --card-grad: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            --accent-green: #10b981;
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+            
+            /* Text & Surfaces */
+            --surface-white: #ffffff;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg-grad);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main App Container */
+        .calculator-app {
+            background: var(--surface-white);
+            width: 100%;
+            max-width: 460px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* App Header */
+        .header {
+            background: var(--card-grad);
+            color: white;
+            padding: 30px 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Main Form Area */
+        .form-container {
+            padding: 24px;
+        }
+
+        /* The Colorful Entry Fields with Inward Curves */
+        .input-group {
+            margin-bottom: 20px;
+            padding: 18px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Labeled Colors */
+        .input-group.weekday { background-color: #dbeafe; color: #1e40af; } /* Blue */
+        .input-group.weekend { background-color: #d1fae5; color: #065f46; } /* Green */
+        .input-group.holiday { background-color: #ffedd5; color: #9a3412; } /* Orange */
+
+        .input-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* Core Stylization: Inward Curved White Fields */
+        input[type="number"] {
+            width: 100%;
+            padding: 16px;
+            background: var(--surface-white);
+            border: none;
+            
+            /* Inward/Convex curve effect using border-radius */
+            border-radius: 50px; 
+            
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: center;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.08); /* Subtle internal shadow */
+            transition: all 0.2s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.12), 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Calculate Button */
+        .calc-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--card-grad);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(30, 58, 168, 0.2);
+        }
+
+        .calc-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Results Display */
+        .results-panel {
+            display: none;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px dashed #e2e8f0;
+        }
+
+        .results-panel.active {
+            display: block;
+        }
+
+        .results-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .res-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 2px;
+        }
+
+        .res-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Grand Total - The colorful highlight */
+        .grand-total-box {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .gt-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .gt-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-app">
+    <div class="header">
+        <h1>Smart Duty Calculator</h1>
+        <p>Abebe Memorial Hospital - Feb 2026</p>
+    </div>
+
+    <div class="form-container">
+        <!-- Input fields with colorful containers and curved inner inputs -->
+        <div class="input-group weekday">
+            <div class="input-label-row">
+                <span>Weekdays (Mon-Fri)</span>
+            </div>
+            <input type="number" id="weekdays" min="0" value="0" placeholder="0">
+        </div>
+
+        <div class="input-group weekend">
+            <div class="input-label-row">
+                <span>Weekend Days</span>
+                <span class="badge">2x Multiplier / 23hr Base</span>
+            </div>
+            <input type="number" id="weekends" min="0" value="0" placeholder="0">
+        </div>
+
+        <div class="input-group holiday">
+            <div class="input-label-row">
+                <span>Holidays</span>
+                <span class="badge">2.5x Multiplier / 23hr Base</span>
+            </div>
+            <input type="number" id="holidays" min="0" value="0" placeholder="0">
+        </div>
+
+        <button class="calc-btn" onclick="calculateDuty()">Calculate Incentives</button>
+
+        <!-- Results displayed below calculation -->
+        <div class="results-panel" id="resultsPanel">
+            <h2 class="results-title">Calculation Report</h2>
+            
+            <div class="result-grid">
+                <div class="result-item" style="grid-column: span 2; background: #fffbeb; border-color: #fef3c7;">
+                    <span class="res-label" style="color: #92400e;">Total Actual Hours Worked:</span>
+                    <span class="res-value" id="totalActual" style="font-size: 1.2rem; color: #b45309;">0.0 hrs</span>
+                </div>
+                <div class="result-item">
+                    <span class="res-label">1x Subtotal (a):</span>
+                    <span class="res-value" id="sub1a">0.0 hrs</span>
+                </div>
+                <div class="result-item">
+                    <span class="res-label">1x Subtotal (b):</span>
+                    <span class="res-value" id="sub1b">0.0 hrs</span>
+                </div>
+                <div class="result-item">
+                    <span class="res-label">1.25x Subtotal:</span>
+                    <span class="res-value" id="sub125">0.0 hrs</span>
+                </div>
+                <div class="result-item">
+                    <span class="res-label">1.5x Subtotal:</span>
+                    <span class="res-value" id="sub15">0.0 hrs</span>
+                </div>
+                <div class="result-item">
+                    <span class="res-label">2x Weekend:</span>
+                    <span class="res-value" id="sub2">0.0 hrs</span>
+                </div>
+                <div class="result-item">
+                    <span class="res-label">2.5x Holiday:</span>
+                    <span class="res-value" id="sub25">0.0 hrs</span>
+                </div>
+            </div>
+
+            <div class="grand-total-box">
+                <div class="gt-label">Grand Total Incentive Units</div>
+                <div class="gt-value" id="grandTotal">0.00</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculateDuty() {
+        // Grab inputs
+        const weekdays = parseInt(document.getElementById('weekdays').value) || 0;
+        const weekends = parseInt(document.getElementById('weekends').value) || 0;
+        const holidays = parseInt(document.getElementById('holidays').value) || 0;
+
+        // --- Core Logic Configuration ---
+        const weekdayActualHours = 15; // Unweighted hours (0.5+2.5+4+8)
+        const weekendActualHours = 23; // Adjusted unweighted base
+        const holidayActualHours = 23; // Adjusted unweighted base
+
+        // Calculate Total Actual Unweighted Hours
+        const actualHoursWorked = (weekdays * weekdayActualHours) +
+                                (weekends * weekendActualHours) +
+                                (holidays * holidayActualHours);
+
+        // --- Calculate Weighted Subtotals ---
+        const sub1a_wtd = weekdays * 0.5 * 1.0;  /* 5:30pm-6:00pm */
+        const sub1b_wtd = weekdays * 2.5 * 1.0;  /* 6:00am-8:30am */
+        const sub125_wtd = weekdays * 4.0 * 1.25; /* 6:00pm-10:00pm */
+        const sub15_wtd = weekdays * 8.0 * 1.5;  /* 10:00pm-6:00am */
+        
+        const sub2_wtd = weekends * 23.0 * 2.0;  /* Weekend */
+        const sub25_wtd = holidays * 23.0 * 2.5; /* Holiday */
+
+        // Grand Total Calculation
+        const grandTotalWeighted = sub1a_wtd + sub1b_wtd + sub125_wtd + sub15_wtd + sub2_wtd + sub25_wtd;
+
+        // --- Update UI ---
+        document.getElementById('totalActual').innerText = actualHoursWorked.toFixed(1) + " hrs";
+        document.getElementById('sub1a').innerText = sub1a_wtd.toFixed(1);
+        document.getElementById('sub1b').innerText = sub1b_wtd.toFixed(1);
+        document.getElementById('sub125').innerText = sub125_wtd.toFixed(1);
+        document.getElementById('sub15').innerText = sub15_wtd.toFixed(1);
+        document.getElementById('sub2').innerText = sub2_wtd.toFixed(1);
+        document.getElementById('sub25').innerText = sub25_wtd.toFixed(1);
+        document.getElementById('grandTotal').innerText = grandTotalWeighted.toFixed(2);
+
+        // Show the results section
+        document.getElementById('resultsPanel').classList.add('active');
+    }
+</script>
+
+</body>
+</html>
+    
+  </body>
+  
+</html>
